@@ -268,17 +268,28 @@ int main(int argc, char **argv)
 	spheres.push_back(new Sphere<float>(Vec3<float>(0, 0, -20), 4, Vec3<float>(1.00, 0.32, 0.36), 1, 0.5));
 	spheres.push_back(new Sphere<float>(Vec3<float>(5, -1, -15), 2, Vec3<float>(0.90, 0.76, 0.46), 1, 0.0));
 	spheres.push_back(new Sphere<float>(Vec3<float>(5, 0, -25), 3, Vec3<float>(0.65, 0.77, 0.97), 1, 0.0));
+	spheres.push_back(new Sphere<float>(Vec3<float>(5, 5, -35), 3, Vec3<float>(0.95, 0.97, 0.1f), 0.2, 0.7));
+	spheres.push_back(new Sphere<float>(Vec3<float>(-5, 5, -25), 3, Vec3<float>(0.65, 0.77, 0.97), 1, 0.0));
 	spheres.push_back(new Sphere<float>(Vec3<float>(-5.5, 0, -15), 3, Vec3<float>(0.90, 0.90, 0.90), 1, 0.0));
 	// light
 	spheres.push_back(new Sphere<float>(Vec3<float>(0, 20, -30), 3, Vec3<float>(0), 0, 0, Vec3<float>(3)));
 	sdl_video_mode(_SCREEN_WIDTH, _SCREEN_HEIGHT);
 	
-	float x = 0.0f;
-	while(x<10.0f) {
+	float a = 0.0f;
+	while(1) {
 		render<float>(spheres);
 		sdl_flip(_screen, _SCREEN_WIDTH, _SCREEN_HEIGHT);
-		spheres.at(1)->center.x = x;
-		x+=0.1f;
+		spheres.at(1)->center.x = 5.0f * cos(a);
+		spheres.at(1)->center.z = -25.0f + 5.0f * sin(a);
+
+		spheres.at(2)->center.x = 5.0f * cos(a+M_PI/2.0f);
+		spheres.at(2)->center.z = -25.0f + 3.0f * sin(a+M_PI/2.0f);
+
+		spheres.at(3)->center.y = 2.5f + 2.5f * cos(a);
+		spheres.at(4)->center.y = 2.5f + 2.5f * cos(a+M_PI/2.0f);
+		spheres.at(5)->center.y = 2.5f + 2.5f * sin(a);
+
+		a+=0.1f;
 	}
 #if 0
 	while (!spheres.empty()) {
