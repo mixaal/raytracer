@@ -226,7 +226,8 @@ void render(const std::vector<Sphere<T> *> &spheres)
 	T angle = tan(M_PI * 0.5 * fov / T(180));
 	// Trace rays
 #pragma omp parallel for
-	for (unsigned y = 0; y < height; ++y) {
+	for(unsigned scanline=0; scanline<16; ++scanline) 
+	for (unsigned y = scanline; y < height; y+=16) {
 		for (unsigned x = 0; x < width; ++x) {
 			T xx = (2 * ((x + 0.5) * invWidth) - 1) * angle * aspectratio;
 			T yy = (1 - 2 * ((y + 0.5) * invHeight)) * angle;
