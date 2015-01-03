@@ -225,9 +225,12 @@ void render(const std::vector<Sphere<T> *> &spheres)
 	T fov = 30, aspectratio = width / T(height);
 	T angle = tan(M_PI * 0.5 * fov / T(180));
 	// Trace rays
+#ifndef __CPU_CORE_FRIENDLY_SCANLINE_NO
+#	define __CPU_CORE_FRIENDLY_SCANLINE_NO 24
+#endif
 #pragma omp parallel for
-	for(unsigned scanline=0; scanline<16; ++scanline) 
-	for (unsigned y = scanline; y < height; y+=16) {
+	for(unsigned scanline=0; scanline<__CPU_CORE_FRIENDLY_SCANLINE_NO; ++scanline) 
+	for (unsigned y = scanline; y < height; y+=__CPU_CORE_FRIENDLY_SCANLINE_NO) {
 		for (unsigned x = 0; x < width; ++x) {
 			T xx = (2 * ((x + 0.5) * invWidth) - 1) * angle * aspectratio;
 			T yy = (1 - 2 * ((y + 0.5) * invHeight)) * angle;
