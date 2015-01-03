@@ -1,5 +1,6 @@
 CC=g++
-DEFS=-D_SCREEN_WIDTH=640 -D_SCREEN_HEIGHT=480
+#CC=clang++
+DEFS=-D_SCREEN_WIDTH=800 -D_SCREEN_HEIGHT=600
 CXXFLAGS= -std=c++11 -march=native -fopenmp -Wall -Ofast -ggdb -Iinclude  $(DEFS)
 LIBS=-lm -lpthread -lSDL -fopenmp
 

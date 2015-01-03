@@ -31,6 +31,7 @@
 #include <vector>
 #include <iostream>
 #include <cassert>
+#include <sys/time.h>
 
 #include "sdlwrap.h"
 
@@ -226,7 +227,7 @@ void render(const std::vector<Sphere<T> *> &spheres)
 	T angle = tan(M_PI * 0.5 * fov / T(180));
 	// Trace rays
 #ifndef __CPU_CORE_FRIENDLY_SCANLINE_NO
-#	define __CPU_CORE_FRIENDLY_SCANLINE_NO 24
+#	define __CPU_CORE_FRIENDLY_SCANLINE_NO 192
 #endif
 #pragma omp parallel for
 	for(unsigned scanline=0; scanline<__CPU_CORE_FRIENDLY_SCANLINE_NO; ++scanline) 
@@ -280,6 +281,10 @@ int main(int argc, char **argv)
 	sdl_video_mode(_SCREEN_WIDTH, _SCREEN_HEIGHT);
 	
 	float a = 0.0f;
+	struct timeval tv_start;
+	gettimeofday(&tv_start, NULL);
+	time_t fps_last(tv_start.tv_sec);
+	unsigned frames(0);
 	while(1) {
 		render<float>(spheres);
 		sdl_flip(_screen, _SCREEN_WIDTH, _SCREEN_HEIGHT);
@@ -294,6 +299,24 @@ int main(int argc, char **argv)
 		spheres.at(5)->center.y = 2.5f + 2.5f * sin(a);
 
 		a+=0.1f;
+
+		++frames;
+		struct timeval tv_now;
+		gettimeofday(&tv_now, NULL);
+		if (tv_now.tv_sec!=fps_last) {
+			fps_last=tv_now.tv_sec;
+			tv_now.tv_sec-=tv_start.tv_sec;
+			if (tv_now.tv_usec<tv_start.tv_usec) {
+			  --tv_now.tv_sec;
+			  tv_now.tv_usec+=1000000;
+			}
+			tv_now.tv_usec-=tv_start.tv_usec;
+			if (!tv_now.tv_sec&&!tv_now.tv_usec)
+				tv_now.tv_usec=1;
+			const double fps(frames/(tv_now.tv_sec+tv_now.tv_usec/1000000.0));
+			printf("\r%.2f  ",fps);
+			fflush(stdout);
+		}
 	}
 #if 0
 	while (!spheres.empty()) {
